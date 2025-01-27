@@ -9,9 +9,8 @@ const express = require('express');
 const  app = express();
 const PORT = 8383;
 
-let data = {
-    name : "John"
-}
+let data =  ["james"];
+
 
 
 //MIDDLEWARE...CONFIGURES OUR SERVER TO EXPECT JSON DATA
@@ -29,6 +28,7 @@ app.use(express.json());
 
 //THIS IS ENDPOINT NUMBER 1 -/
 app.get('/', (req, res) =>{
+    console.log("User requested the Homepage website")
     res.send(`
         <body 
          style="background: pink;
@@ -38,16 +38,24 @@ app.get('/', (req, res) =>{
          <p>
            ${JSON.stringify(data)}
          </p>
+         <a href="/dashboard">Dashboard</a>
         </body>
+        <script>console.log("This is my script")</script>
         `)
 })
 
 app.get('/dashboard', (req, res) => {
-    console.log('ohhh now i hit the /dashboard endpoint');
-    res.send('<h1>Dashboard</h1>');
+    res.send(`
+        <body>
+            <h1>Dashboard</h1>
+            <a href="/">Home</a>
+        </body>
+    `);
 })
 
-
+app.get('/baby', (req, res) => {
+    res.send("My name is Djabu and i am a good girl")
+})
 
 //TYPE-2 API endpoint (non visual)
 
@@ -60,18 +68,27 @@ DELETE -> DELETE
 
 app.get('/api/data', (req, res) => {
     console.log('This one was for data');
-    res.send(data);
+    res.status(599).send(data);
 })
 
 app.post('/api/data', (req, res) => {
     //someone wants to create a user (ex: when they click a sign up buttom)
-    //the user clicks the sign up button afterentering their credentials
-    //their brtowser is wired up to send out a network request to the server to the 
+    //the user clicks the sign up button after entering their credentials
+    //their browser is wired up to send out a network request to the server to
     //handle that action
     const newEntry = req.body
     console.log(newEntry)
+    data.push(newEntry.name)
     res.sendStatus(201)
    
 })
+
+app.delete("/api/data", (req, res) =>{
+    data.pop();
+    console.log("we deleted the element off the end of the array");
+    res.sendStatus(203);
+})
+
+
 
 app.listen(PORT, () => console.log(`Server has started on: ${PORT}`))
